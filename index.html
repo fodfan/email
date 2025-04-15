@@ -43,8 +43,8 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-             font-size: 1.8em;
-             margin: 0;
+            font-size: 1.8em;
+            margin: 0;
         }
 
         .control-group {
@@ -64,9 +64,9 @@
         }
 
         .input-group label {
-             white-space: nowrap;
-             flex-shrink: 0;
-             margin-right: auto;
+            white-space: nowrap;
+            flex-shrink: 0;
+            margin-right: auto;
         }
 
         .input-group input {
@@ -78,11 +78,9 @@
             min-width: 0;
         }
 
-        /* --- Unified Button Styles Start --- */
         .btn {
             padding: 5px 10px;
-            /* border: none; Replaced */
-            border: 1px solid white; /* Added white border */
+            border: 1px solid white;
             border-radius: 3px;
             cursor: pointer;
             transition: 0.3s;
@@ -92,15 +90,6 @@
             font-size: 0.9em;
             flex: 0 0 auto;
         }
-
-        .btn-reset {
-            /* Styles inherited from .btn */
-        }
-
-        .btn-main {
-             /* Styles inherited from .btn */
-        }
-         /* --- Unified Button Styles End --- */
 
         .action-buttons,
         .selection-tools,
@@ -120,7 +109,6 @@
         .selection-tools {
             flex-wrap: wrap;
         }
-
 
         .range-input {
             display: flex;
@@ -172,20 +160,14 @@
             overflow: hidden;
             text-overflow: ellipsis;
             min-width: 0;
-             white-space: nowrap;
-             font-size: 0.95em;
-        }
-
-        .copy-btn {
-             /* Inherits .btn style including border */
+            white-space: nowrap;
+            font-size: 0.95em;
         }
 
         .selected {
             background-color: #e3f2fd;
         }
 
-
-        /* --- Mobile Optimizations --- */
         @media (max-width: 480px) {
             body {
                 margin: 10px;
@@ -194,71 +176,38 @@
                 padding: 15px;
                 margin: 0;
             }
-
             .header h1 {
                 font-size: 1.4em;
             }
-
             .control-group {
                 flex-direction: column;
                 gap: 12px;
                 margin-bottom: 20px;
             }
-
             .input-group {
-                 min-width: unset;
-                 flex-wrap: nowrap;
-                 gap: 8px;
-                 width: 100%;
+                min-width: unset;
+                flex-wrap: nowrap;
+                gap: 8px;
+                width: 100%;
             }
-
-            .input-group label {
-                 flex-shrink: 0;
-                 white-space: nowrap;
-            }
-
             .input-group input {
-                flex-grow: 1;
-                flex-shrink: 1;
-                min-width: 0;
                 padding: 6px 10px;
             }
-
-            /* Unified Mobile Button Style */
             .btn {
-                 padding: 4px 8px;
-                 font-size: 0.85em;
-                 /* White border is inherited */
+                padding: 4px 8px;
+                font-size: 0.85em;
             }
-
-            .range-input {
-                 gap: 5px;
-                 margin-top: 8px;
+            .range-input input {
+                padding: 4px 8px;
+                font-size: 0.85em;
             }
-             .range-input input {
-                 padding: 4px 8px;
-                 min-width: 0;
-                 font-size: 0.85em;
-             }
-
-             .action-buttons, .selection-tools, .sort-buttons {
-                 justify-content: flex-start;
-                 gap: 4px;
-             }
-              .action-buttons .btn,
-              .selection-tools .btn,
-              .sort-buttons .btn {
-                   flex-basis: auto;
-              }
-
-
-             .email-item {
-                 padding: 8px 6px;
-                 gap: 5px;
-             }
-             .email-info {
-                 font-size: 0.9em;
-             }
+            .email-item {
+                padding: 8px 6px;
+                gap: 5px;
+            }
+            .email-info {
+                font-size: 0.9em;
+            }
         }
     </style>
 </head>
@@ -309,12 +258,11 @@
         </div>
 
         <div id="output-container">
-             <!-- Generated content will appear here -->
+            <!-- 生成内容将出现在这里 -->
         </div>
     </div>
 
-    <!-- Link to the obfuscated JavaScript file -->
+    <!-- 外部混淆脚本 -->
     <script src="script.obfuscated.js" defer></script>
-
 </body>
 </html>
