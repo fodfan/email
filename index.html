@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>邮箱过滤器</title>
     <style>
+        /* 所有原有样式保持不变 */
         body {
             font-family: Arial, sans-serif;
             max-width: 800px;
@@ -93,10 +94,10 @@
             text-align: right;
             color: #999;
             user-select: none;
-            margin-right: 10px; /* 新增：增加序号与内容的间距 */
+            margin-right: 10px;
         }
         .output-text span {
-            margin-left: 10px; /* 新增：确保内容与序号有足够间距 */
+            margin-left: 10px;
         }
         .output-text input[type="checkbox"] {
             position: absolute;
@@ -123,7 +124,6 @@
     </style>
 </head>
 <body>
-    <!-- 以下是完全相同的HTML结构和JavaScript代码 -->
     <div class="container">
         <h1>邮箱过滤器</h1>
         <p>输入包含多行数据的文本，点击"过滤数据"按钮删除包含"@"字符的行，或点击"反向操作"按钮删除不包含"@"字符的行</p>
@@ -285,14 +285,32 @@ abc@123.com
                 status.textContent = '输入数据已复制到剪贴板';
             });
             
-            // 粘贴输入
+            // 粘贴输入 (已修复移动端问题)
             pasteInputBtn.addEventListener('click', async function() {
                 try {
+                    // 在移动设备上，需要先聚焦到输入框
+                    inputData.focus();
+                    
+                    // 添加一个短暂延迟确保输入框已聚焦
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    
+                    // 尝试读取剪贴板
                     const text = await navigator.clipboard.readText();
                     inputData.value = text;
                     status.textContent = '剪贴板内容已粘贴到输入框';
                 } catch (err) {
-                    status.textContent = '粘贴失败: ' + err.message;
+                    // 如果直接访问失败，尝试使用document.execCommand方法
+                    try {
+                        inputData.select();
+                        const success = document.execCommand('paste');
+                        if (success) {
+                            status.textContent = '剪贴板内容已粘贴到输入框';
+                        } else {
+                            status.textContent = '请手动粘贴 (长按输入框选择粘贴)';
+                        }
+                    } catch (err2) {
+                        status.textContent = '请手动粘贴 (长按输入框选择粘贴)';
+                    }
                 }
             });
             
