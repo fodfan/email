@@ -60,32 +60,61 @@
         button.reverse:hover {
             background-color: #7b1fa2;
         }
+        button.small {
+            padding: 2px 8px;
+            font-size: 12px;
+            background-color: #607d8b;
+        }
+        button.small:hover {
+            background-color: #455a64;
+        }
         .output-container {
             position: relative;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
         }
         .output-text {
             counter-reset: line;
         }
         .output-text div {
             position: relative;
-            padding-left: 30px;
-            margin-bottom: 2px;
+            padding-left: 50px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
         }
         .output-text div::before {
             counter-increment: line;
             content: counter(line);
             position: absolute;
-            left: 0;
-            width: 25px;
-            padding-right: 5px;
+            left: 30px;
+            width: 20px;
             text-align: right;
             color: #999;
             user-select: none;
+        }
+        .output-text input[type="checkbox"] {
+            position: absolute;
+            left: 10px;
+            cursor: pointer;
+        }
+        .output-text .copy-line-btn {
+            margin-left: 10px;
+            visibility: hidden;
+        }
+        .output-text div:hover .copy-line-btn {
+            visibility: visible;
         }
         .status {
             margin-top: 10px;
             color: #666;
             font-style: italic;
+        }
+        .selection-actions {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
         }
     </style>
 </head>
@@ -97,10 +126,9 @@
         <div>
             <label for="inputData">输入数据:</label>
             <textarea id="inputData" placeholder="请在此粘贴您的数据...">例：18888888888 m12345
-ab0417@e.edu.kg
-19999999999 t56789
-ac0417@e.edu.kg
-</textarea>
+abc@123.com
+19999999999 m56789
+123@qq.com</textarea>
         </div>
         
         <div class="button-group">
@@ -114,12 +142,17 @@ ac0417@e.edu.kg
         <div>
             <label for="outputData">过滤结果:</label>
             <div class="output-container">
+                <div class="selection-actions">
+                    <button id="selectAllBtn" class="small">全选</button>
+                    <button id="invertSelectionBtn" class="small">反选</button>
+                    <button id="copySelectedBtn" class="small">复制选中</button>
+                </div>
                 <div id="outputData" class="output-text"></div>
             </div>
         </div>
         
         <div class="button-group">
-            <button id="copyOutputBtn" class="secondary">复制结果</button>
+            <button id="copyOutputBtn" class="secondary">复制全部结果</button>
             <button id="downloadBtn">下载为TXT</button>
         </div>
         
@@ -137,6 +170,9 @@ ac0417@e.edu.kg
             const pasteInputBtn = document.getElementById('pasteInputBtn');
             const copyOutputBtn = document.getElementById('copyOutputBtn');
             const downloadBtn = document.getElementById('downloadBtn');
+            const selectAllBtn = document.getElementById('selectAllBtn');
+            const invertSelectionBtn = document.getElementById('invertSelectionBtn');
+            const copySelectedBtn = document.getElementById('copySelectedBtn');
             const status = document.getElementById('status');
             
             // 过滤数据（删除包含@的行）
@@ -158,16 +194,78 @@ ac0417@e.edu.kg
             // 更新输出区域
             function updateOutput(filteredLines, originalLength, messagePrefix) {
                 outputData.innerHTML = '';
-                filteredLines.forEach(line => {
+                filteredLines.forEach((line, index) => {
                     if (line.trim() !== '') {
                         const div = document.createElement('div');
-                        div.textContent = line;
+                        
+                        // 添加复选框
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.id = 'line-' + index;
+                        div.appendChild(checkbox);
+                        
+                        // 添加行内容
+                        const contentSpan = document.createElement('span');
+                        contentSpan.textContent = line;
+                        div.appendChild(contentSpan);
+                        
+                        // 添加行复制按钮
+                        const copyBtn = document.createElement('button');
+                        copyBtn.className = 'small copy-line-btn';
+                        copyBtn.textContent = '复制';
+                        copyBtn.addEventListener('click', function() {
+                            navigator.clipboard.writeText(line).then(function() {
+                                status.textContent = '已复制行内容: ' + line;
+                            }, function() {
+                                status.textContent = '复制失败';
+                            });
+                        });
+                        div.appendChild(copyBtn);
+                        
                         outputData.appendChild(div);
                     }
                 });
                 
                 status.textContent = `${messagePrefix} ${originalLength} 行 → 剩余 ${filteredLines.length} 行`;
             }
+            
+            // 全选
+            selectAllBtn.addEventListener('click', function() {
+                const checkboxes = outputData.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = true;
+                });
+                status.textContent = '已全选所有行';
+            });
+            
+            // 反选
+            invertSelectionBtn.addEventListener('click', function() {
+                const checkboxes = outputData.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = !checkbox.checked;
+                });
+                status.textContent = '已反选所有行';
+            });
+            
+            // 复制选中
+            copySelectedBtn.addEventListener('click', function() {
+                const checkboxes = outputData.querySelectorAll('input[type="checkbox"]:checked');
+                if (checkboxes.length === 0) {
+                    status.textContent = '没有选中任何行';
+                    return;
+                }
+                
+                const selectedLines = Array.from(checkboxes).map(checkbox => {
+                    return checkbox.parentElement.querySelector('span').textContent;
+                });
+                
+                const text = selectedLines.join('\n');
+                navigator.clipboard.writeText(text).then(function() {
+                    status.textContent = `已复制 ${selectedLines.length} 行选中内容`;
+                }, function() {
+                    status.textContent = '复制失败';
+                });
+            });
             
             // 清空输入
             clearBtn.addEventListener('click', function() {
@@ -195,11 +293,13 @@ ac0417@e.edu.kg
             
             // 复制输出
             copyOutputBtn.addEventListener('click', function() {
-                const lines = Array.from(outputData.children).map(div => div.textContent);
+                const lines = Array.from(outputData.children).map(div => {
+                    return div.querySelector('span').textContent;
+                });
                 const text = lines.join('\n');
                 
                 navigator.clipboard.writeText(text).then(function() {
-                    status.textContent = '结果已复制到剪贴板';
+                    status.textContent = '全部结果已复制到剪贴板';
                 }, function() {
                     status.textContent = '复制失败';
                 });
@@ -207,7 +307,9 @@ ac0417@e.edu.kg
             
             // 下载为TXT
             downloadBtn.addEventListener('click', function() {
-                const lines = Array.from(outputData.children).map(div => div.textContent);
+                const lines = Array.from(outputData.children).map(div => {
+                    return div.querySelector('span').textContent;
+                });
                 const text = lines.join('\n');
                 
                 if (!text.trim()) {
