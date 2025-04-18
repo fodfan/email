@@ -93,6 +93,10 @@
             text-align: right;
             color: #999;
             user-select: none;
+            margin-right: 10px; /* 新增：增加序号与内容的间距 */
+        }
+        .output-text span {
+            margin-left: 10px; /* 新增：确保内容与序号有足够间距 */
         }
         .output-text input[type="checkbox"] {
             position: absolute;
@@ -119,6 +123,7 @@
     </style>
 </head>
 <body>
+    <!-- 以下是完全相同的HTML结构和JavaScript代码 -->
     <div class="container">
         <h1>邮箱过滤器</h1>
         <p>输入包含多行数据的文本，点击"过滤数据"按钮删除包含"@"字符的行，或点击"反向操作"按钮删除不包含"@"字符的行</p>
