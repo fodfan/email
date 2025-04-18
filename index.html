@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>邮箱去除器</title>
+    <title>邮箱过滤器</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,6 +54,12 @@
         button.danger:hover {
             background-color: #da190b;
         }
+        button.reverse {
+            background-color: #9c27b0;
+        }
+        button.reverse:hover {
+            background-color: #7b1fa2;
+        }
         .output-container {
             position: relative;
         }
@@ -85,17 +91,21 @@
 </head>
 <body>
     <div class="container">
-        <h1>邮箱去除器</h1>
-        <p>输入包含多行数据的文本，点击"过滤数据"按钮删除包含"@"字符的行</p>
+        <h1>邮箱过滤器</h1>
+        <p>输入包含多行数据的文本，点击"过滤数据"按钮删除包含"@"字符的行，或点击"反向操作"按钮删除不包含"@"字符的行</p>
         
         <div>
             <label for="inputData">输入数据:</label>
-            <textarea id="inputData" placeholder="请在此粘贴您的数据...">示例：18888888888 m12345
-            123@qq.com</textarea>
+            <textarea id="inputData" placeholder="请在此粘贴您的数据...">例：18888888888 m12345
+ab0417@e.edu.kg
+19999999999 t56789
+ac0417@e.edu.kg
+</textarea>
         </div>
         
         <div class="button-group">
             <button id="filterBtn">过滤数据</button>
+            <button id="reverseFilterBtn" class="reverse">反向操作</button>
             <button id="clearBtn" class="danger">清空输入</button>
             <button id="copyInputBtn" class="secondary">复制输入</button>
             <button id="pasteInputBtn" class="secondary">粘贴输入</button>
@@ -121,6 +131,7 @@
             const inputData = document.getElementById('inputData');
             const outputData = document.getElementById('outputData');
             const filterBtn = document.getElementById('filterBtn');
+            const reverseFilterBtn = document.getElementById('reverseFilterBtn');
             const clearBtn = document.getElementById('clearBtn');
             const copyInputBtn = document.getElementById('copyInputBtn');
             const pasteInputBtn = document.getElementById('pasteInputBtn');
@@ -128,11 +139,24 @@
             const downloadBtn = document.getElementById('downloadBtn');
             const status = document.getElementById('status');
             
-            // 过滤数据
+            // 过滤数据（删除包含@的行）
             filterBtn.addEventListener('click', function() {
                 const lines = inputData.value.split('\n');
                 const filteredLines = lines.filter(line => !line.includes('@'));
                 
+                updateOutput(filteredLines, lines.length, '过滤完成: 原始');
+            });
+            
+            // 反向过滤（删除不包含@的行）
+            reverseFilterBtn.addEventListener('click', function() {
+                const lines = inputData.value.split('\n');
+                const filteredLines = lines.filter(line => line.includes('@'));
+                
+                updateOutput(filteredLines, lines.length, '反向过滤完成: 原始');
+            });
+            
+            // 更新输出区域
+            function updateOutput(filteredLines, originalLength, messagePrefix) {
                 outputData.innerHTML = '';
                 filteredLines.forEach(line => {
                     if (line.trim() !== '') {
@@ -142,8 +166,8 @@
                     }
                 });
                 
-                status.textContent = `过滤完成: 原始 ${lines.length} 行 → 剩余 ${filteredLines.length} 行`;
-            });
+                status.textContent = `${messagePrefix} ${originalLength} 行 → 剩余 ${filteredLines.length} 行`;
+            }
             
             // 清空输入
             clearBtn.addEventListener('click', function() {
